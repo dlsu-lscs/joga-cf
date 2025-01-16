@@ -1,9 +1,13 @@
 require('dotenv').config(); // Load environment variables from .env
 const express = require('express');
 const axios = require('axios');
+const cors = require('cors'); // Import the cors middleware
 
 const app = express();
 const PORT = 3000;
+
+// Enable CORS for all routes
+app.use(cors());
 
 // Middleware to parse JSON requests
 app.use(express.json());
@@ -20,12 +24,12 @@ app.post('/', async (req, res) => {
       {
         headers: {
           Authorization: `Bearer ${process.env.LSCS_API_KEY}`, // Use the API key from the environment variables
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
       }
     );
     console.log('passed 1');
-    console.log(response.data)
+    console.log(response.data);
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
 
@@ -55,25 +59,27 @@ ${response.data.full_name}
 ### OUTPUT FORMAT (Do not include "(DID YOU KNOW?)" in the output format, it is just given for context in name generation.)
 (DID YOU KNOW?) Your first name, "{FIRST_NAME}" means {fun fact}? Your surname {LAST_NAME}, originated from "origin", and there are approximately {APPROXIMATE_NUMBER} people in the world with your surname, making it fairly {CATEGORY}.
 
-              ` }
-          ]
-        }
-      ]
+              `,
+            },
+          ],
+        },
+      ],
     };
 
     const headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     };
 
-    axios.post(url, data, { headers })
-      .then(resp => {
-        res.send({ lscs_data: response.data, llm_data: resp.data })
+    axios
+      .post(url, data, { headers })
+      .then((resp) => {
+        res.send({ lscs_data: response.data, llm_data: resp.data });
         console.log(resp.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
-    console.log('passed 2')
+    console.log('passed 2');
 
     // Return the response from the external API
   } catch (error) {

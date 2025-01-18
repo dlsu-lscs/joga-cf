@@ -30,8 +30,6 @@ app.post('/', async (req, res) => {
         },
       }
     );
-    scanned.push(req.query.id)
-
     if (!scanned.includes(req.query.id)) {
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
@@ -107,6 +105,7 @@ app.post('/', async (req, res) => {
         });
 
         console.log('Message sent: %s', info.messageId);
+        scanned.push(req.query.id)
       } catch (error) {
         console.error('Error sending email:', error);
       }
